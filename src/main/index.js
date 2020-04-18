@@ -1,10 +1,7 @@
-import { app, BrowserWindow, Menu, Tray } from 'electron'
+import { app, BrowserWindow, Menu, Tray, nativeTheme } from 'electron'
 import db from '../datastore'
 
-/**
- * Set `__static` path to static files in production
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
- */
+// 主进程中运行的脚本通过创建web页面来展示用户界面
 if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
@@ -14,7 +11,7 @@ const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
-
+// 应用图标
 let tray = null
 
 function createWindow () {
@@ -26,7 +23,6 @@ function createWindow () {
     useContentSize: true,
     width: 1000
   })
-
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', (event) => {
@@ -72,7 +68,7 @@ function createWindow () {
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  if (process.platform !== 'darwin') { // 当操作系统不是darwin（macOS）的话
     app.quit()
   }
 })
@@ -82,23 +78,3 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
-/**
- * Auto Updater
- *
- * Uncomment the following code below and install `electron-updater` to
- * support auto updating. Code Signing with a valid certificate is required.
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
- */
-
-/*
-import { autoUpdater } from 'electron-updater'
-
-autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
-
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
- */

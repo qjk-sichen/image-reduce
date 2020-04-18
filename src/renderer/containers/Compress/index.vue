@@ -39,12 +39,18 @@
 </template>
 
 <script>
+/*
+由于 Electron 使用了 Chromium 来展示 web 页面，所以 Chromium 的多进程架构也被使用到。 
+每个 Electron 中的 web 页面运行在它自己的渲染进程中
+Electron 的用户在 Node.js 的 API 支持下可以在页面中和操作系统进行一些底层交互。
+*/ 
 import lrz from 'lrz'
 import { ipcRenderer } from 'electron'
 import base64Img from 'base64-img'
 export default {
   data: () => {
     return {
+      // 该数组存放压缩后图片数组
       list: [],
       visible: false
     }
@@ -56,6 +62,7 @@ export default {
       for (let item in files) {
         const name = files[item].split('/')[(files[item].split('/').length - 1)]
         const result = base64Img.base64Sync(files[item]);
+        // 图片文件转换base64格式给lrz去压缩
         const file = this.dataURLtoFile(result, name)
         lrz(file)
           .then((rst) => {
@@ -84,6 +91,7 @@ export default {
       return new File([u8arr], filename, {type:mime});
     },
     getImgList() {
+      // 这边更新一下视图文件
       this.list = [].concat(this.$db.find('imgList')) || [] // 数组单纯的替换是无法触发视图的更新的
       console.log(this.list);
     },
